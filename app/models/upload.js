@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const uploadSchema = new mongoose.Schema({
-  title: {
+  description: {
     type: String
   },
   url: {

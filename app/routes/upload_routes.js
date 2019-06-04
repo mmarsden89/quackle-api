@@ -64,7 +64,7 @@ router.post('/uploads', requireToken, multerUpload.single('picture'), (req, res,
     }))
     .then(s3UploadFile.promiseS3Upload)
     .then(s3Response => {
-      return Upload.create({owner: req.user.id, url: s3Response.Location, title: req.body.title, description: req.body.description})
+      return Upload.create({owner: req.user.id, url: s3Response.Location, tag: req.body.tag, description: req.body.description})
     })
     .then(uploadDocument => {
       // The object we are passing through the browser.
