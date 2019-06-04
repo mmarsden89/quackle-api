@@ -75,7 +75,7 @@ router.post('/uploads', requireToken, multerUpload.single('picture'), (req, res,
 
 // UPDATE
 // PATCH /uploads/5a7db6c74d55bc51bdf39793
-router.patch('/uploads/:id', requireToken, (req, res) => {
+router.patch('/uploads/:id', requireToken, (req, res, next) => {
   // if the client attempts to change the `owner` property by including a new
   // owner, prevent that by deleting that key/value pair
   delete req.body.upload.owner
@@ -102,12 +102,12 @@ router.patch('/uploads/:id', requireToken, (req, res) => {
     // if that succeeded, return 204 and no JSON
     .then(() => res.sendStatus(204))
     // if an error occurs, pass it to the handler
-    .catch(err => handle(err, res))
+    .catch(next)
 })
 
 // DESTROY
 // DELETE /uploads/5a7db6c74d55bc51bdf39793
-router.delete('/uploads/:id', requireToken, (req, res) => {
+router.delete('/uploads/:id', requireToken, (req, res, next) => {
   Upload.findById(req.params.id)
     .then(handle404)
     .then(upload => {
@@ -119,7 +119,29 @@ router.delete('/uploads/:id', requireToken, (req, res) => {
     // send back 204 and no content if the deletion succeeded
     .then(() => res.sendStatus(204))
     // if an error occurs, pass it to the handler
-    .catch(err => handle(err, res))
+    .catch(next)
+})
+
+router.patch('/likes/:id', requireToken, (req, res, next) => {
+  console.log(req.body)
+  const liker = req.body.upload.likes
+  delete req.body.upload
+
+  Upload.findById(req.params.id)
+    .then(handle404)
+    .then(upload => {
+      const hasLiked = upload.likes.some(like => {
+        console.log(like)
+        return like.toString() === liker
+      })
+      if (hasLiked) {
+        return upload.update({$pull: {likes: liker}})
+      } else {
+        return upload.update({$push: {likes: liker}})
+      }
+    })
+    .then(upload => res.sendStatus(204))
+    .catch(next)
 })
 
 module.exports = router
