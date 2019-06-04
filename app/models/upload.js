@@ -17,7 +17,14 @@ const uploadSchema = new mongoose.Schema({
     required: true
   }
 }, {
+  virtuals: true,
   timestamps: true
+})
+
+uploadSchema.virtual('username', {
+  ref: 'User',
+  localField: 'owner',
+  foreignField: '_id'
 })
 
 module.exports = mongoose.model('Upload', uploadSchema)

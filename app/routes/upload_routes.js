@@ -22,8 +22,10 @@ const router = express.Router()
 
 // INDEX
 // GET /uploads
-router.get('/uploads', (req, res) => {
+router.get('/uploads', (req, res, next) => {
   Upload.find()
+    // .populate('owner', 'username')
+    .populate('owner', 'username')
     .then(uploads => {
       // `uploads` will be an array of Mongoose documents
       // we want to convert each one to a POJO, so we use `.map` to
@@ -33,19 +35,20 @@ router.get('/uploads', (req, res) => {
     // respond with status 200 and JSON of the uploads
     .then(uploads => res.status(200).json({ uploads: uploads }))
     // if an error occurs, pass it to the handler
-    .catch(err => handle(err, res))
+    .catch(next)
 })
 
 // SHOW
 // GET /uploads/5a7db6c74d55bc51bdf39793
-router.get('/uploads/:id', requireToken, (req, res) => {
+router.get('/uploads/:id', (req, res, next) => {
   // req.params.id will be set based on the `:id` in the route
   Upload.findById(req.params.id)
+    .populate('owner', 'username')
     .then(handle404)
     // if `findById` is succesful, respond with 200 and "upload" JSON
     .then(upload => res.status(200).json({ upload: upload.toObject() }))
     // if an error occurs, pass it to the handler
-    .catch(err => handle(err, res))
+    .catch(next)
 })
 
 // CREATE
