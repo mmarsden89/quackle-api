@@ -21,14 +21,20 @@ const uploadSchema = new mongoose.Schema({
     ref: 'User'
   }]
 }, {
-  virtuals: true,
-  timestamps: true
+  timestamps: true,
+  toObject: {virtuals: true}
 })
 
 uploadSchema.virtual('username', {
   ref: 'User',
   localField: 'owner',
   foreignField: '_id'
+})
+
+uploadSchema.virtual('comments', {
+  ref: 'Comment',
+  localField: '_id',
+  foreignField: 'picture'
 })
 
 module.exports = mongoose.model('Upload', uploadSchema)

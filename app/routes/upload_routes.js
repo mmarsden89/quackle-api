@@ -25,6 +25,7 @@ const router = express.Router()
 router.get('/uploads', (req, res, next) => {
   Upload.find()
     // .populate('owner', 'username')
+    .populate('comments')
     .populate('owner', 'username')
     .then(uploads => {
       // `uploads` will be an array of Mongoose documents
