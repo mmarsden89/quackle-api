@@ -11,7 +11,7 @@ const commentSchema = new mongoose.Schema({
     required: true
   },
   owner: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.Mixed,
     ref: 'User',
     required: true
   }

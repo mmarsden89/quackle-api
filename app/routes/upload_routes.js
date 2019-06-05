@@ -28,6 +28,7 @@ router.get('/uploads', (req, res, next) => {
     // .populate('owner', 'username')
     .populate('comments')
     .populate('owner', 'username')
+    .populate({path: 'comments', populate: {path: 'owner', select: 'username'}})
     .then(uploads => {
       // `uploads` will be an array of Mongoose documents
       // we want to convert each one to a POJO, so we use `.map` to
