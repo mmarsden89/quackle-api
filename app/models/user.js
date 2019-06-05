@@ -10,6 +10,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     unique: true
   },
+  profile: {
+    type: String,
+    default: 'https://unclogwarrior.s3.amazonaws.com/blank-profile-picture.png'
+  },
   hashedPassword: {
     type: String,
     required: true
