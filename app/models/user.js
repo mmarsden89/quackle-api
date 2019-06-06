@@ -14,6 +14,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'https://unclogwarrior.s3.amazonaws.com/blank-profile-picture.png'
   },
+  following: [{
+    type: mongoose.Schema.Types.Mixed,
+    ref: 'User'
+  }],
+  followers: [{
+    type: mongoose.Schema.Types.Mixed,
+    ref: 'User'
+  }],
   hashedPassword: {
     type: String,
     required: true

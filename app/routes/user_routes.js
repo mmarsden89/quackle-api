@@ -195,4 +195,25 @@ router.delete('/sign-out', requireToken, (req, res, next) => {
     .catch(next)
 })
 
+router.patch('/follow/:id', requireToken, (req, res, next) => {
+  console.log(req.body)
+  const follower = req.body.user.followers
+
+  User.findById(req.params.id)
+    .then(handle404)
+    .then(user => {
+      const hasFollowed = user.followers.some(follow => {
+        console.log(follow)
+        return follow.toString() === follower
+      })
+      if (hasFollowed) {
+        return user.update({$pull: {followers: follower}})
+      } else {
+        return user.update({$push: {followers: follower}})
+      }
+    })
+    .then(user => res.sendStatus(204))
+    .catch(next)
+})
+
 module.exports = router
