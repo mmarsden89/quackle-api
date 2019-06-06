@@ -45,7 +45,9 @@ router.get('/uploads', (req, res, next) => {
 router.get('/uploads/:id', (req, res, next) => {
   // req.params.id will be set based on the `:id` in the route
   Upload.findById(req.params.id)
-    .populate('owner', 'username')
+    .populate('comments')
+    .populate('owner', '-token')
+    .populate({path: 'comments', populate: {path: 'owner', select: 'username'}})
     .then(handle404)
     // if `findById` is succesful, respond with 200 and "upload" JSON
     .then(upload => res.status(200).json({ upload: upload.toObject() }))

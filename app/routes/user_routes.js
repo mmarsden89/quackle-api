@@ -29,7 +29,7 @@ const router = express.Router()
 
 router.get('/users', (req, res, next) => {
   User.find()
-    // .populate('owner', 'username')
+    .populate('-token')
     .then(users => {
       // `users` will be an array of Mongoose documents
       // we want to convert each one to a POJO, so we use `.map` to
