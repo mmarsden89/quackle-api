@@ -4,7 +4,6 @@ const passport = require('passport')
 // const bodyParser = require('body-parser')
 const s3UploadFile = require('../../lib/s3UploadApi')
 const Upload = require('../models/upload')
-const User = require('../models/user')
 const multer = require('multer')
 const customErrors = require('../../lib/custom_errors')
 const AWS = require('aws-sdk')
@@ -27,7 +26,7 @@ router.get('/uploads', (req, res, next) => {
   Upload.find()
     // .populate('owner', 'username')
     .populate('comments')
-    .populate('owner', 'username')
+    .populate('owner', '-token')
     .populate({path: 'comments', populate: {path: 'owner', select: 'username'}})
     .then(uploads => {
       // `uploads` will be an array of Mongoose documents
