@@ -127,7 +127,6 @@ router.delete('/uploads/:id', requireToken, (req, res, next) => {
 })
 
 router.patch('/likes/:id', requireToken, (req, res, next) => {
-  console.log(req.body)
   const liker = req.body.upload.likes
   delete req.body.upload
 
