@@ -15,12 +15,6 @@ const customErrors = require('../../lib/custom_errors')
 // check if no returned users
 const recipientNotFound = customErrors.recipientNotFound
 
-// check if attempting to start a chat with self
-const chatWithSelf = customErrors.chatWithSelf
-
-// only participants can request to show a chat
-const requireParticipation = customErrors.requireParticipation
-
 // we'll use this function to send 404 when non-existant document is requested
 const handle404 = customErrors.handle404
 
@@ -44,13 +38,13 @@ const router = express.Router()
 
 // INDEX
 // GET /chats
-router.get('/chats', requireToken, (req, res, next) => {
-  Chat.find({ $or: [{user1: req.user.id}, {user2: req.user.id}] })
+router.get('/chats', (req, res, next) => {
+  Chat.find()
     .sort('-updatedAt')
     .populate('user1', 'username _id')
     .populate('user2', 'username _id')
     .populate('lastMessage')
-    .populate({path: 'lastMessage', populate: {path: 'owner', select: 'username'}})
+    .populate({path: 'lastMessage', populate: {path: 'owner'}})
     .then(chats => {
       // `chats` will be an array of Mongoose documents
       // we want to convert each one to a POJO, so we use `.map` to
@@ -65,18 +59,18 @@ router.get('/chats', requireToken, (req, res, next) => {
 
 // SHOW
 // GET /chats/5a7db6c74d55bc51bdf39793
-router.get('/chats/:id', requireToken, (req, res, next) => {
+router.get('/chats/:id', (req, res, next) => {
   // req.params.id will be set based on the `:id` in the route
   Chat.findById(req.params.id)
     .populate('user1', 'username _id')
     .populate('user2', 'username _id')
     .populate('lastMessage')
-    .populate({path: 'lastMessage', populate: {path: 'owner', select: 'username'}})
+    .populate({path: 'lastMessage', populate: {path: 'owner'}})
     // .then(console.log)
     .then(handle404)
     // if `findById` is succesful, respond with 200 and "chat" JSON
     .then(chat => {
-      Message.find({ chat: chat }).sort('createdAt').populate('owner', 'username _id')
+      Message.find({ chat: chat }).sort('createdAt').populate('owner')
         .then(messages => messages.map(message => message.toObject()))
         .then(messages => {
           return res.status(200).json({ chat: {...chat.toObject(), messages: messages} })
@@ -134,6 +128,22 @@ router.post('/chats', requireToken, (req, res, next) => {
         })
         .catch(next)
     })
+    .catch(next)
+})
+
+// DESTROY
+// DELETE /chats/5a7db6c74d55bc51bdf39793
+router.delete('/chats/:id', (req, res, next) => {
+  Chat.findById(req.params.id)
+    .then(handle404)
+    .then(chat => {
+      // throw an error if current user doesn't own `chat`
+      // delete the chat ONLY IF the above didn't throw
+      chat.remove()
+    })
+    // send back 204 and no content if the deletion succeeded
+    .then(() => res.sendStatus(204))
+    // if an error occurs, pass it to the handler
     .catch(next)
 })
 
