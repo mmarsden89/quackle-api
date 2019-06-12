@@ -41,7 +41,8 @@ router.get('/messages', requireToken, (req, res, next) => {
     .then(chat => requireParticipation(req, chat))
     .catch(next)
 
-  Message.find({ chat: req.body.message.chat }).sort('createdAt').populate('owner', 'username _id')
+  Message.find({ chat: req.body.message.chat }).sort('createdAt')
+    .populate({path: 'lastMessage', populate: {path: 'owner', select: 'username'}})
     .then(messages => {
       // `messages` will be an array of Mongoose documents
       // we want to convert each one to a POJO, so we use `.map` to
@@ -59,6 +60,7 @@ router.get('/messages', requireToken, (req, res, next) => {
 router.get('/messages/:id', requireToken, (req, res, next) => {
   // req.params.id will be set based on the `:id` in the route
   Message.findById(req.params.id)
+    .populate({path: 'lastMessage', populate: {path: 'owner', select: 'username'}})
     .then(handle404)
     // if `findById` is succesful, respond with 200 and "message" JSON
     .then(message => {

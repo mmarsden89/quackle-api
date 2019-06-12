@@ -50,6 +50,7 @@ router.get('/chats', requireToken, (req, res, next) => {
     .populate('user1', 'username _id')
     .populate('user2', 'username _id')
     .populate('lastMessage')
+    .populate({path: 'lastMessage', populate: {path: 'owner', select: 'username'}})
     .then(chats => {
       // `chats` will be an array of Mongoose documents
       // we want to convert each one to a POJO, so we use `.map` to
@@ -66,11 +67,11 @@ router.get('/chats', requireToken, (req, res, next) => {
 // GET /chats/5a7db6c74d55bc51bdf39793
 router.get('/chats/:id', requireToken, (req, res, next) => {
   // req.params.id will be set based on the `:id` in the route
-  console.log(req.params.id)
   Chat.findById(req.params.id)
     .populate('user1', 'username _id')
     .populate('user2', 'username _id')
     .populate('lastMessage')
+    .populate({path: 'lastMessage', populate: {path: 'owner', select: 'username'}})
     // .then(console.log)
     .then(handle404)
     // if `findById` is succesful, respond with 200 and "chat" JSON

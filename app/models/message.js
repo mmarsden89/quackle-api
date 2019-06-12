@@ -16,7 +16,9 @@ const messageSchema = new mongoose.Schema({
     required: true
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  toObject: {virtuals: true}
 })
+
 
 module.exports = mongoose.model('Message', messageSchema)
