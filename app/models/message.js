@@ -20,5 +20,4 @@ const messageSchema = new mongoose.Schema({
   toObject: {virtuals: true}
 })
 
-
 module.exports = mongoose.model('Message', messageSchema)

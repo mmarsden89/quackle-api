@@ -41,8 +41,8 @@ const router = express.Router()
 router.get('/chats', (req, res, next) => {
   Chat.find()
     .sort('-updatedAt')
-    .populate('user1', 'username _id')
-    .populate('user2', 'username _id')
+    .populate('user1', 'username _id profile')
+    .populate('user2', 'username _id profile')
     .populate('lastMessage')
     .populate({path: 'lastMessage', populate: {path: 'owner'}})
     .then(chats => {
@@ -62,8 +62,8 @@ router.get('/chats', (req, res, next) => {
 router.get('/chats/:id', (req, res, next) => {
   // req.params.id will be set based on the `:id` in the route
   Chat.findById(req.params.id)
-    .populate('user1', 'username _id')
-    .populate('user2', 'username _id')
+    .populate('user1', 'username _id profile')
+    .populate('user2', 'username _id profile')
     .populate('lastMessage')
     .populate({path: 'lastMessage', populate: {path: 'owner'}})
     // .then(console.log)
