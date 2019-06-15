@@ -44,7 +44,7 @@ router.get('/chats', (req, res, next) => {
     .populate('user1', 'username _id profile')
     .populate('user2', 'username _id profile')
     .populate('lastMessage')
-    .populate({path: 'lastMessage', populate: {path: 'owner'}})
+    // .populate({path: 'lastMessage', populate: {path: 'owner'}})
     .then(chats => {
       // `chats` will be an array of Mongoose documents
       // we want to convert each one to a POJO, so we use `.map` to

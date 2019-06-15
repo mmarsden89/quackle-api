@@ -92,7 +92,7 @@ router.post('/messages', requireToken, (req, res, next) => {
     .then(message => {
       Chat.findById(req.body.message.chat)
         .then(chat => {
-          return chat.update({$push: {lastMessage: message}})
+          return chat.update({ lastMessage: message })
         })
         .catch(next)
     })
