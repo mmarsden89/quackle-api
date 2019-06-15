@@ -1,13 +1,13 @@
 const mongoose = require('mongoose')
 
-const commentSchema = new mongoose.Schema({
-  text: {
+const messageSchema = new mongoose.Schema({
+  body: {
     type: String,
     required: true
   },
-  blog: {
+  chat: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Blog',
+    ref: 'Chat',
     required: true
   },
   owner: {
@@ -20,10 +20,4 @@ const commentSchema = new mongoose.Schema({
   toObject: {virtuals: true}
 })
 
-commentSchema.virtual('username', {
-  ref: 'User',
-  localField: 'owner',
-  foreignField: '_id'
-})
-
-module.exports = mongoose.model('Comment', commentSchema)
+module.exports = mongoose.model('Message', messageSchema)
